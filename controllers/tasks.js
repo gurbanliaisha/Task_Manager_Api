@@ -25,12 +25,12 @@ const getTask = async (req, res) => {
     const task = await Task.findOne({ _id: taskID });
 
     if (!task) {
-      return res.status(404).json({ msg: `No task with id: ${taskID}` });
+      return res.status(404).json({ msg: `No task with id: ${taskID}` }); //this error handling handle errors that if our id's numbers length is same and sytax is okey but there is not a id in db like this
     }
 
     res.status(200).json(task);
   } catch (error) {
-    res.status(500).json({ msg: error });
+    res.status(500).json({ msg: error }); //this error handle if the sytax is not okey for  provided limitations
   }
 };
 
@@ -38,8 +38,19 @@ const updateTask = (req, res) => {
   res.json({ id: req.params.id, method: "update single task" });
 };
 
-const deleteTask = (req, res) => {
-  res.json({ id: req.params.id, method: "delete single task" });
+const deleteTask = async (req, res) => {
+  try {
+    const { id: taskId } = req.params;
+    const task = await Task.findOneAndDelete({ _id: taskId });
+
+    if (!task) {
+      return res.status(404).json({ msg: `No task with id : ${taskId} ` });
+    }
+
+    res.status(200).json({ status: "success" });
+  } catch (error) {
+    res.status(500).json({ error });
+  }
 };
 
 module.exports = {
